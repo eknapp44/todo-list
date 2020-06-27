@@ -1,31 +1,26 @@
-const inquirer = require('inquirer');
 
-const todos = [
-  { 
-    id: 0,
-    text: "Clean up Tiger's puke",
-    complete: false,
-    dueDate: '6/27/2020',
-    dueTime: '12:00 AM',
-  },
-  { 
-    id: 2,
-    text: "Zoom with Howard",
-    complete: false,
-    dueDate: '6/27/2020',
-    dueTime: '12:00 AM',
-  },
-  { 
-    id: 3,
-    text: "Cut the Grass",
-    complete: false,
-    dueDate: '6/28/2020',
-    dueTime: '1:00 PM',
-  },
-];
+const inquirer = require('inquirer');
+const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
 
 function addTodo() {
-  console.log("Adding to do item.");
+  inquirer.prompt([
+    {
+        name: "text",
+        message: "What is your todo?",
+    }
+  ])
+  .then(answers => {
+    const todo = {
+        id: uuidv4(),
+        text: answers.text,
+        complete: false,
+    }
+    todos.push(todo)
+  })
+  .catch(error => {
+    throw new Error("Error adding a new todo!", error)
+  })
 }
 
 function updateTodo() {
@@ -40,37 +35,48 @@ function deleteTodo() {
   console.log('Deleting todo...');
 }
 
-inquirer
-  .prompt([
-      {
-          name: 'command',
-          message: "What would you like to do?",
-          type: "list",
-          choices: ["add", "update", "complete", "delete"]
-      }
-  ])
-  .then(answers => {
-    switch(answers.command) {
-        case "add":
-          addTodo();
-          break;
-        case "update":
-          updateTodo();
-          break;
-        case "complete":
-          toggleComplete();
-          break;
-        case "delete":
-          deleteTodo();
-          break;
-        default: 
-          throw new Error ('You need to enter a real command.')
-      }
-  })
-  .catch(error => {
-    if(error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else when wrong
-    }
-  });
+function listTodos() {
+    console.log('Listing todos...');
+    console.table(todos);
+  }
+
+let todos = JSON.parse(fs.readFileSync(`todos.json`));
+console.table(todos);
+
+// inquirer
+//   .prompt([
+//       {
+//           name: 'command',
+//           message: "What would you like to do?",
+//           type: "list",
+//           choices: ["list", "add", "update", "complete", "delete"]
+//       }
+//   ])
+//   .then(answers => {
+//     switch(answers.command) {
+//         case "list":
+//           listTodos();
+//           break;
+//         case "add":
+//           addTodo();
+//           break;
+//         case "update":
+//           updateTodo();
+//           break;
+//         case "complete":
+//           toggleComplete();
+//           break;
+//         case "delete":
+//           deleteTodo();
+//           break;
+//         default: 
+//           throw new Error ('You need to enter a real command.')
+//       }
+//   })
+//   .catch(error => {
+//     if(error.isTtyError) {
+//       console.log("Is TTY Error!")
+//     } else {
+//       console.log("AWWWW SNAP SON! Something is messed!", error.message)
+//     }
+//   });
