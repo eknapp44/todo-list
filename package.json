@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "inquirer": "^14.2.3",
-    "uuid": "^8.2.0"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {},
   "scripts": {
